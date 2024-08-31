@@ -10,7 +10,8 @@ auth = Blueprint('auth', __name__)
 pTemp = 'test'
 pList = []
 change = 0
-
+teamDic = []
+teamList = []
 
 # use decorators to link the function to a url
 @auth.route('/', methods=['GET', 'POST'])
@@ -53,6 +54,8 @@ def index():
 
 @auth.route('/standings', methods=['GET', 'POST','EAST', 'WEST', 'CENTRAL', 'CHANGE'])
 def standings():
+    teamDic = []
+    teamIDs = []
     global change
     error = None
     league = "American League East"
@@ -95,37 +98,16 @@ def standings():
     stat_dict = Function.getStanding(id)
     stats = stat_dict[num]
     #print(stats)
-    team1 = stats['teams'][0]
-    name1 = team1['name']
-    w1 = team1['w']
-    l1 = team1['l']
-    p1 = round((team1['w'] / (team1['w'] + team1['l'])) * 100, 2)
-    gb1 = team1['gb']
-    team2 = stats['teams'][1]
-    name2 = team2['name']
-    w2 = team2['w']
-    l2 = team2['l']
-    p2 = round((team2['w'] / (team2['w'] + team2['l'])) * 100, 2)
-    gb2 = team2['gb']
-    team3 = stats['teams'][2]
-    name3 = team3['name']
-    w3 = team3['w']
-    l3 = team3['l']
-    p3 = round((team3['w'] / (team3['w'] + team3['l'])) * 100, 2)
-    gb3 = team3['gb']
-    team4 = stats['teams'][3]
-    name4 = team4['name']
-    w4 = team4['w']
-    l4 = team4['l']
-    p4 = round((team4['w'] / (team4['w'] + team4['l'])) * 100, 2)
-    gb4 = team4['gb']
-    team5 = stats['teams'][4]
-    name5 = team5['name']
-    w5 = team5['w']
-    l5 = team5['l']
-    p5 = round((team5['w'] / (team5['w'] + team5['l'])) * 100, 2)
-    gb5 = team5['gb']
-    return render_template('standings.html', data= "<h1>" + league + "</h1>", error = error, name1 = name1, w1 = w1, l1 = l1, p1 = p1, gb1 = gb1, name2 = name2, w2 = w2, l2 = l2, p2 = p2, gb2 = gb2, name3 = name3, w3 = w3, l3 = l3, p3 = p3, gb3 = gb3, name4 = name4, w4 = w4, l4 = l4, p4 = p4, gb4 = gb4,name5 = name5, w5 = w5, l5 = l5, p5 = p5, gb5 = gb5)
+    for x in range(5):
+        team = stats['teams'][x]
+        name = str(team['name'])
+        w = team['w']
+        l = team['l']
+        p = round((team['w'] / (team['w'] + team['l'])) * 100, 2)
+        gb = team['gb']
+        teamList = [name,w,l,p,gb]
+        teamDic.append(teamList)
+    return render_template('standings.html', data= "<h1>" + league + "</h1>", error = error, name1 = teamDic[0][0], w1 = teamDic[0][1], l1 = teamDic[0][2], p1 = teamDic[0][3], gb1 = teamDic[0][4], name2 = teamDic[1][0], w2 = teamDic[1][1], l2 = teamDic[1][2], p2 = teamDic[1][3], gb2 = teamDic[1][4], name3 = teamDic[2][0], w3 = teamDic[2][1], l3 = teamDic[2][2], p3 = teamDic[2][3], gb3 = teamDic[2][4], name4 = teamDic[3][0], w4 = teamDic[3][1], l4 = teamDic[3][2], p4 = teamDic[3][3], gb4 = teamDic[3][4],name5 = teamDic[4][0], w5 = teamDic[4][1], l5 = teamDic[4][2], p5 = teamDic[4][3], gb5 = teamDic[4][4])
 
 
 

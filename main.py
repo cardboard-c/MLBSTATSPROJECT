@@ -1,6 +1,6 @@
 import statsapi
 import logging
-import Functions
+import Function
 logger = logging.getLogger('statsapi')
 logger.setLevel(logging.DEBUG)
 rootLogger = logging.getLogger()
