@@ -1,0 +1,82 @@
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+body{
+    margin:0;
+    text-align: center;
+    background: linear-gradient(-45deg, #e9b109, #c85218, #1a97c4, #17b08c);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+    
+}
+
+
+nav{
+    background-color: rgba(100, 100, 100, .8) ;
+    padding: 30px;
+
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+nav a{
+    color:black;
+    margin:20px;
+    padding:10px;
+    border-radius: 10px;
+    text-decoration: none;
+    background-color: rgba(200, 180, 180, .9);
+    transition: background-color 0.8s;
+    
+
+}
+button{
+    background-color: rgba(200, 180, 180, .9);
+    border-radius: 10px;
+    padding: 10px;
+}
+input{
+    margin:30px;
+    height: 3vw;
+    font-size: 2vw;
+}
+a:hover {
+    
+    background-color: rgb(81, 81, 255);
+  }
+.hero-body{
+    background-color: rgba(200, 200, 200, .8);
+    width:80%;
+    border-radius: 20px;
+    margin:auto;
+    margin-top: 50px;
+    padding:30px;
+    margin-bottom: 40px;
+    
+}
+table{
+    width:60%;
+    border-collapse: collapse;
+    margin:auto;
+}
+th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+tr:hover{
+    background-color: rgba(81, 81, 255, 0.5);
+}
+tr{
+    border-radius: 15px;
+    transition: background-color 0.8s;
+}
+.title{
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Player Look Up</h3>
+    <div class="box">
+        <form method="POST" action="/lineup">
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="playerName" name="playerName" placeholder="Player's Name" autofocus="">
+                </div>
+            </div>
+            <input type="hidden" name="btn_identifier" value="search" />
+            <button class="button is-block is-info is-large is-fullwidth">Submit</button>
+            <table>
+                 <tr>
+    <td>Player Name:</td>
+    <td> {{name}} </td>
+  </tr>
+  <tr>
+    <td>Games Played: </td>
+    <td> {{gamesPlayed}} </td>
+  </tr>
+  <tr>
+    <td>Batting Average:</td>
+    <td> {{batAvg}} </td>
+  </tr>
+  <tr>
+    <td>HomeRuns: </td>
+    <td> {{homeruns}}  </td>
+  </tr>
+  <tr>
+    <td>Strike Outs:</td>
+    <td> {{strikeouts}}  </td>
+  </tr>
+  <tr>
+    <td>RBI:</td>
+    <td> {{rbi}} </td>
+  </tr>
+</table>
+        </form>
+        <h3 class="title">Custom Lineup</h3>
+        <form method="POST" action="/lineup">
+            <input type="hidden" name="btn_identifier" value="add" />
+            <button class="button is-block is-info is-large is-fullwidth">Add Player</button>
+            <table>
+            <tr>
+                <th>1. {{p1}}</th>
+            </tr>
+            <tr>
+                <th>2. {{p2}}</th>
+            </tr>
+            <tr>
+                <th>3. {{p3}}</th>
+            </tr>
+            <tr>
+                <th>4. {{p4}}</th>
+            </tr>
+            <tr>
+                <th>5. {{p5}}</th>
+            </tr>
+            <tr>
+                <th>6. {{p6}}</th>
+            </tr>
+            <tr>
+                <th>7. {{p7}}</th>
+            </tr>
+            <tr>
+                <th>8. {{p8}}</th>
+            </tr>
+            <tr>
+                <th>9. {{p9}}</th>
+            </tr>
+
+        </table>
+        </form>
+    </div>
+    <form method="POST" action="/lineup">
+        <input type="hidden" name="btn_identifier" value="submit" />
+        <button class="button is-block is-info is-large is-fullwidth">Submit Lineup</button>
+    </form>
+</div>
+{% endblock %}
