@@ -12,7 +12,7 @@ pList = []
 change = 0
 teamDic = []
 teamList = []
-
+context = {}
 # use decorators to link the function to a url
 @auth.route('/', methods=['GET', 'POST'])
 def index():
@@ -55,6 +55,10 @@ def index():
 @auth.route('/standings', methods=['GET', 'POST','EAST', 'WEST', 'CENTRAL', 'CHANGE'])
 def standings():
     teamDic = []
+    context = {}
+    leagueList = ["East", "Central", "West"]
+    nlID = [204,205,203]
+    alID = [201,202,200]
     teamIDs = []
     global change
     error = None
@@ -62,52 +66,41 @@ def standings():
     num = 200
     id = '103'
     print(request.args.to_dict())
+
     if request.method == 'GET' and ('mode' in request.args.to_dict()):
         if request.args.to_dict()['mode'] == 'CHANGE':
             if(change == 0 ):
                 change = 1
+                id = '104'
             else:
                 change = 0
-        if request.args.to_dict()['mode'] == 'EAST':
-            if(change == 0):
-                num = 201
                 id = '103'
-                league = "American League East"
-            else:
-                num = 204
-                id = '104'
-                league = "National League East"
-        if request.args.to_dict()['mode'] == 'CENTRAL':
-            if(change == 0):
-                num = 202
-                id = '103'
-                league = "American League Central"
-            else:
-                num = 205
-                id = '104'
-                league = "National League Central"
-        if request.args.to_dict()['mode'] == 'WEST':
-            if(change == 0):
-                num = 200
-                id = '103'
-                league = "American League West"
-            else:
-                num = 203
-                id = '104'
-                league = "National League West"
-    stat_dict = Function.getStanding(id)
-    stats = stat_dict[num]
-    #print(stats)
-    for x in range(5):
-        team = stats['teams'][x]
-        name = str(team['name'])
-        w = team['w']
-        l = team['l']
-        p = round((team['w'] / (team['w'] + team['l'])) * 100, 2)
-        gb = team['gb']
-        teamList = [name,w,l,p,gb]
-        teamDic.append(teamList)
-    return render_template('standings.html', data= "<h1>" + league + "</h1>", error = error, name1 = teamDic[0][0], w1 = teamDic[0][1], l1 = teamDic[0][2], p1 = teamDic[0][3], gb1 = teamDic[0][4], name2 = teamDic[1][0], w2 = teamDic[1][1], l2 = teamDic[1][2], p2 = teamDic[1][3], gb2 = teamDic[1][4], name3 = teamDic[2][0], w3 = teamDic[2][1], l3 = teamDic[2][2], p3 = teamDic[2][3], gb3 = teamDic[2][4], name4 = teamDic[3][0], w4 = teamDic[3][1], l4 = teamDic[3][2], p4 = teamDic[3][3], gb4 = teamDic[3][4],name5 = teamDic[4][0], w5 = teamDic[4][1], l5 = teamDic[4][2], p5 = teamDic[4][3], gb5 = teamDic[4][4])
+
+
+    for y in range(3):
+        teamDic = []
+        if(id == '103'):
+            stat_dict = Function.getStanding(id)
+            stats = stat_dict[alID[y]]
+            league = "American League "
+        else:
+            stat_dict = Function.getStanding(id)
+            stats = stat_dict[nlID[y]]
+            league = "National League "
+        for x in range(5):
+            team = stats['teams'][x]
+            name = str(team['name'])
+            w = team['w']
+            l = team['l']
+            p = round((team['w'] / (team['w'] + team['l'])) * 100, 2)
+            gb = team['gb']
+            teamList = [name,w,l,p,gb]
+            teamDic.append(teamList)
+        context[leagueList[y]] = teamDic
+        context["league"] = "<h1>" + league + "</h1>"
+    print(context)
+
+    return render_template('standings.html', data= context)
 
 
 
@@ -315,17 +308,11 @@ def sortedLineup():
 
 @auth.route('/team/<name>')
 def team(name):
+
     id = getTeamId(name)
     roster = getRoster(id)
-    roster2 = getRoster(id)
-    tl = splitRoster(roster)
-    names = getNames(roster2)
-    return render_template('team.html', tName=name, nb1=tl[0][0], nm1=names[0], p1=tl[0][2],
-                           nb2=tl[1][0], nm2=names[1], p2=tl[1][2],
-                           nb3=tl[2][0], nm3=names[2], p3=tl[2][2],
-                           nb4=tl[3][0], nm4=names[3], p4=tl[3][2],
-                           nb5=tl[4][0], nm5=names[4], p5=tl[4][2],
-                           nb6=tl[5][0], nm6=names[5], p6=tl[5][2],
-                           nb7=tl[6][0], nm7=names[6], p7=tl[6][2],
-                           nb8=tl[7][0], nm8=names[7], p8=tl[7][2],
-                           nb9=tl[8][0], nm9=names[8], p9=tl[8][2])
+    context["playerName"] = getNames(roster)
+    context["playerList"] = splitRoster(roster)
+    context["teamName"] = name
+    print(splitRoster(roster))
+    return render_template('team.html', data=context)

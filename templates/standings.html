@@ -5,24 +5,37 @@
     table, th, td {
         border:1px solid black;
     }
+    table, th {width:20%}
 </style>
 <div class="column is-4 is-offset-4">
     <h3 class="title">Season Standings</h3>
     <div class="box">
-        <form method="EAST" action="/standings">
-            <input type="hidden" name="mode" value="EAST" />
-            <button class="button is-block is-info is-large is-fullwidth">East</button> </form>
-            <form method="CENTRAL" action="/standings">
-            <input type="hidden" name="mode" value="CENTRAL" />
-                <button class="button is-block is-info is-large is-fullwidth">Central</button></form>
-            <form method="WEST" action="/standings">
-            <input type="hidden" name="mode" value="WEST" />
-                <button class="button is-block is-info is-large is-fullwidth">West</button></form>
           <form method="CHANGE" action="/standings">
             <input type="hidden" name="mode" value="CHANGE" />
                 <button class="button is-block is-info is-large is-fullwidth">Change League</button></form>
     <div class="box">
-        {{data|safe}}
+        {{data.league|safe}}
+        <table  style="width:100%">
+            <tr>
+                <th>Name</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Win%</th>
+                <th>GB</th>
+            </tr>
+            {% for team in data.East %}
+           <tr>
+
+                <th><a href="{{ url_for('auth.team', name = team.0) }}">{{team.0}}</a></th>
+                <th>{{team.1}}</th>
+                <th>{{team.2}}</th>
+                <th>{{team.3}}</th>
+                <th>{{team.4}}</th>
+            </tr>
+            {% endfor %}
+
+        </table>
+        <br>
         <table style="width:100%">
             <tr>
                 <th>Name</th>
@@ -31,42 +44,37 @@
                 <th>Win%</th>
                 <th>GB</th>
             </tr>
-            <tr>
-                <th> <a href="{{ url_for('auth.team', name = name1) }}"> {{name1}} </a></th>
-                <th>{{w1}}</th>
-                <th>{{l1}}</th>
-                <th>{{p1}}%</th>
-                <th>{{gb1}}</th>
-            </tr>
-            <tr>
-                <th><a href="{{ url_for('auth.team', name = name2) }}">{{name2}}</a></th>
-                <th>{{w2}}</th>
-                <th>{{l2}}</th>
-                <th>{{p2}}%</th>
-                <th>{{gb2}}</th>
-            </tr>
-            <tr>
-                <th><a href="{{ url_for('auth.team', name = name3) }}">{{name3}}</a></th>
-                <th>{{w3}}</th>
-                <th>{{l3}}</th>
-                <th>{{p3}}%</th>
-                <th>{{gb3}}</th>
-            </tr>
-            <tr>
-                <th><a href="{{ url_for('auth.team', name = name4) }}">{{name4}}</a></th>
-                <th>{{w4}}</th>
-                <th>{{l4}}</th>
-                <th>{{p4}}%</th>
-                <th>{{gb4}}</th>
-            </tr>
-            <tr>
-                <th><a href="{{ url_for('auth.team', name = name5) }}">{{name5}}</a></th>
-                <th>{{w5}}</th>
-                <th>{{l5}}</th>
-                <th>{{p5}}%</th>
-                <th>{{gb5}}</th>
-            </tr>
+             {% for team in data.Central %}
+           <tr>
 
+                <th><a href="{{ url_for('auth.team', name = team.0) }}">{{team.0}}</a></th>
+                <th>{{team.1}}</th>
+                <th>{{team.2}}</th>
+                <th>{{team.3}}</th>
+                <th>{{team.4}}</th>
+            </tr>
+            {% endfor %}
+
+        </table>
+        <br>
+        <table  style="width:100%">
+            <tr>
+                <th>Name</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Win%</th>
+                <th>GB</th>
+            </tr>
+            {% for team in data.West %}
+           <tr>
+
+                <th><a href="{{ url_for('auth.team', name = team.0) }}">{{team.0}}</a></th>
+                <th>{{team.1}}</th>
+                <th>{{team.2}}</th>
+                <th>{{team.3}}</th>
+                <th>{{team.4}}</th>
+            </tr>
+            {% endfor %}
         </table>
     </div>
 </div>

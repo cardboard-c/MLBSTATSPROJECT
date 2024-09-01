@@ -28,14 +28,22 @@ def getRoster(teamId):
     return roster
 
 def splitRoster(roster):
-    endres = []
-    endres = range(25)
-    endres = list(roster.split("\n"))
-    x = []
-    for item in endres:
+    #grab the string of every player on the team split by line
+    playerTotal = list(roster.split("\n"))
+    playerNotParsed = []
+    #for that string stated above split by spaces
+    for item in playerTotal:
         s = list(item.split(" "))
-        x.append(s)
-    return x
+        playerNotParsed.append(s)
+    final = []
+    #since not every posistion has 2 letters there are some empty elements of the list created for palyers this for loop cleans up any empty elements
+    for player in playerNotParsed:
+        tmp = []
+        for elementOfPlayer in player:
+            if(elementOfPlayer!= ''):
+                tmp.append(elementOfPlayer)
+        final.append(tmp)
+    return final
 
 
 def getNames(roster):
