@@ -90,11 +90,14 @@ def standings():
         for x in range(5):
             team = stats['teams'][x]
             name = str(team['name'])
-            w = team['w']
-            l = team['l']
-            p = round((team['w'] / (team['w'] + team['l'])) * 100, 2)
-            gb = team['gb']
-            teamList = [name,w,l,p,gb]
+            wins = team['w']
+            loses = team['l']
+            try:
+                percent = round((team['w'] / (team['w'] + team['l'])) * 100, 2)
+            except:
+                percent = 0
+            gamesToBeat = team['gb']
+            teamList = [name,wins,loses,percent,gamesToBeat]
             teamDic.append(teamList)
         context[leagueList[y]] = teamDic
         context["league"] = "<h1>" + league + "</h1>"

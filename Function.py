@@ -108,29 +108,45 @@ def compare(name1, name2, statName):
 
 
 #takes list of players including all stats called player stats and a list of player names
-#then it sorts
+#then it sorts by batting average of the players from highest to lowest
 def sortByAVG(playerList, names):
     AVGList = {}
-    sortedList = []
     sortedDic = {}
     for i in range(9):
         AVGList[names[i]]= getSepcificStatNum(playerList[i],"avg")
     sortedList = sorted(AVGList, key=AVGList.get, reverse=True)
 
     for i in sortedList:
-        sortedDic[i] = AVGList [i]
+        sortedDic[i] = AVGList[i]
     print(sortedDic)
     return sortedList
 
-def createPlayerList(testing):
+#createPlayerList creates a list of 9 players including all their career hitting stats
+def createPlayerList(names):
     playerList = []
     for i in range(9):
-        playerList.append(getplayer(testing[i], "career", "hitting"))
+        playerList.append(getplayer(names[i], "career", "hitting"))
     return playerList
-def createLineup(testing):
-    playerList = createPlayerList(testing)
-    lineUp = sortByAVG(playerList, testing)
+
+#TODO Make this better more ideal lineup and not just sort by avg
+def createLineup(names):
+    playerList = createPlayerList(names)
+    lineUp = sortByAVG(playerList, names)
     return lineUp
+
+
+
+
+
+
+
+
+
+
+
+
+
+""" THIS IS REALLY DOG DO NOT USE USE FUNCTIONS ABOVE THANK YOU 
 
 def compareToAverage(testing):
     BasePlyer = [AVG, SB, HR, RBI, BB]
@@ -186,3 +202,4 @@ def compareToAverage(testing):
     print(editedList)
     output[1] = firstPerson
     return output
+    """
