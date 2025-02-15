@@ -106,6 +106,9 @@ def compare(name1, name2, statName):
     elif(p1_stat < p2_stat):
         print(name2 + " has " + str(differnce) + " more " + statName + " than " + name1)
 
+
+#takes list of players including all stats called player stats and a list of player names
+#then it sorts
 def sortByAVG(playerList, names):
     AVGList = {}
     sortedList = []
