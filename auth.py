@@ -3,7 +3,7 @@ from flask import Flask, render_template, Blueprint, redirect, url_for, request
 from testing import getdata
 import Function
 
-from Function import createLinup, getplayerCareer, getTeamId, getRoster, splitRoster, getNames
+from Function import createLineup, getplayerCareer, getTeamId, getRoster, splitRoster, getNames
 
 auth = Blueprint('auth', __name__)
 
@@ -301,7 +301,7 @@ def sortedLineup():
     # use sorting function to sort pList
     # Display sorted pList
     global pList
-    sList = createLinup(pList)
+    sList = createLineup(pList)
     return render_template('sortedLineup.html', p1=sList[0], p2=sList[1], p3=sList[2], p4=sList[3], p5=sList[4],
                            p6=sList[5], p7=sList[6], p8=sList[7], p9=sList[8])
 

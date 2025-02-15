@@ -6,6 +6,9 @@ import Function
 ## from flask_table import Table, Col
 
 def getdata():
+ list = ["Oswaldo Cabrera", "Paul Goldschmidt", "Aaron Judge", "Giancarlo Stanton", "Cody Bellinger","Josh Donaldson", "Anthony Rizzo", "Juan Soto", "Gleyber Torres"]
+ print(Function.createLineup(list))
+ """
    ## logger = logging.getLogger('statsapi')
    ## logger.setLevel(logging.DEBUG)
    ## rootLogger = logging.getLogger()
@@ -44,6 +47,7 @@ def getdata():
     print(final)
 
     return stats
+    """
     ##for team in statsapi.lookup_team('ny'):
     ##    print(team)
     ##print("What stat")

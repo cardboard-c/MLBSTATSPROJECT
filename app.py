@@ -1,6 +1,7 @@
 # import the Flask class from the flask module
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+import Function
 from testing import getdata
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
@@ -37,5 +38,6 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
     db.init_app(app)
+
 
     return app1

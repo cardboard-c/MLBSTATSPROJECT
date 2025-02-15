@@ -10,21 +10,11 @@ formatter = logging.Formatter("%(asctime)s - %(levelname)8s - %(name)s(%(thread)
 ch.setFormatter(formatter)
 rootLogger.addHandler(ch)
 
-print ("type name of player")
-name = input()
-print("type career or season")
-careerOrSeason =input()
-print("type hitting or pitching")
-pos = input()
 
-stats = Functions.getplayer(name, careerOrSeason, pos)
-for team in statsapi.lookup_team('ny'):
-    print(team)
-print(statsapi.standings(date='07/04/2021'))
-print("What statA")
-statName = input()
-final = Functions.getSepcificStat(stats, statName)
-print(final)
+list = ["Oswaldo Cabrera", "Paul Goldschmidt", "Aaron Judge", "Giancarlo Stanton","Cody Bellinger", "Josh Donaldson", "Anthony Rizzo", "Juan Soto", "Gleyber Torres"]
+
+
+print(Function.createPlayerList(list))
 
 
 
