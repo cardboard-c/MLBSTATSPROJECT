@@ -12,7 +12,10 @@
              {% for player in data.playerList %}
             <tr>
                 <th>{{player.0}}</th>
-                <th><a href="{{ url_for('auth.lineup', name = nm1) }}">{{player.2}} {{player.3}}</a></th>
+                {% if player | length > 1 %}
+                {% set fullName = player.2 + ' ' + player.3 %}
+                <th><a href="{{url_for('auth.index', name = fullName)}}">{{player.2}} {{player.3}}</a></th>
+                {% endif %}
                 <th>{{player.1}}</th>
             </tr>
              {% endfor %}

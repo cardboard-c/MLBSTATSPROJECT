@@ -27,11 +27,28 @@ def index():
     hr = ''
     so = ''
     RBI = ''
-
+    print(request.url)
+    if "name" in str(request.url):
+        name = str(request.url).split("name=",1)[1]
+        name = name.replace("+", " ")
+        print(name)
+        print(("HIT HIT HIT HIT"))
+        stats = getplayerCareer(name)
+        if (stats != None):
+            fullname = stats['first_name'] + " " + stats['last_name']
+            stats = stats['stats'][0]['stats']
+            gamesPlayed = stats['gamesPlayed']
+            batAvg = stats['avg']
+            hr = stats['homeRuns']
+            so = stats['strikeOuts']
+            RBI = stats['rbi']
+            global pTemp
+            pTemp = fullname
+        return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI)
     if request.method == 'POST':
         if request.form['btn_identifier'] == 'search':
             pName = request.form['playerName']
-
             stats = getplayerCareer(pName)
             if(stats != None):
                 fullname = stats['first_name'] + " " + stats['last_name']
@@ -41,10 +58,10 @@ def index():
                 hr = stats['homeRuns']
                 so = stats['strikeOuts']
                 RBI = stats['rbi']
-                global pTemp
+                pTemp
                 pTemp = fullname
             return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
-                                   homeruns=hr, strikeouts=so, rbi=RBI)
+                                       homeruns=hr, strikeouts=so, rbi=RBI)
         else:
             return render_template('index.html', error=error)
 
@@ -309,9 +326,9 @@ def sortedLineup():
                            p6=sList[5], p7=sList[6], p8=sList[7], p9=sList[8])
 
 
-@auth.route('/team/<name>')
+@auth.route('/team/<name>', methods=['GET', 'POST'])
 def team(name):
-
+    error = None
     id = getTeamId(name)
     roster = getRoster(id)
     context["playerName"] = getNames(roster)

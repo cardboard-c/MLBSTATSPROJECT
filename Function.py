@@ -43,7 +43,8 @@ def splitRoster(roster):
         for elementOfPlayer in player:
             if(elementOfPlayer!= ''):
                 tmp.append(elementOfPlayer)
-        final.append(tmp)
+        if(tmp):
+            final.append(tmp)
     return final
 
 
