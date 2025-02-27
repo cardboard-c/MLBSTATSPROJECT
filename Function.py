@@ -29,7 +29,7 @@ def getRoster(teamId):
     return roster
 
 def splitRoster(roster):
-    #grab the string of every player on the team split by line
+    #grab the string of every player on the team split by line, trying something
     playerTotal = list(roster.split("\n"))
     playerNotParsed = []
     #for that string stated above split by spaces
