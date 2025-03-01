@@ -27,6 +27,7 @@ def index():
     hr = ''
     so = ''
     RBI = ''
+    yearOrCareer = "No"
     print(request.url)
     if "name" in str(request.url):
         name = str(request.url).split("name=",1)[1]
@@ -46,10 +47,17 @@ def index():
             pTemp = fullname
         return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
                                homeruns=hr, strikeouts=so, rbi=RBI)
+
+    if request.method == 'POST':
+        if request.form.get('csStats') == 'season':
+            yearOrCareer = "season"
+        else:
+            yearOrCareer = "career"
+
     if request.method == 'POST':
         if request.form['btn_identifier'] == 'search':
             pName = request.form['playerName']
-            stats = getplayerCareer(pName)
+            stats = Function.getplayer(pName, yearOrCareer, "hitting")
             if(stats != None):
                 fullname = stats['first_name'] + " " + stats['last_name']
                 stats = stats['stats'][0]['stats']
@@ -60,6 +68,8 @@ def index():
                 RBI = stats['rbi']
                 pTemp
                 pTemp = fullname
+            else:
+                fullname = "SEASON HAS NOT STARTED YET NO DATA"
             return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
                                        homeruns=hr, strikeouts=so, rbi=RBI)
         else:

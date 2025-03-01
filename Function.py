@@ -15,8 +15,13 @@ BB = 3.09
 def getplayer(name, yearlyOrCareer, pos):
     #stat = statsapi.player_stats(next(x['id'] for x in statsapi.get('sports_players', {'season': 2022, 'gameType': 'W'})['people'] if x['fullName'] == name), pos, yearlyOrCareer)
     stat = statsapi.player_stat_data(next(x['id'] for x in statsapi.get('sports_players', {'season': 2022, 'gameType': 'W'})['people'] if x['fullName'] == name), pos, yearlyOrCareer, sportId=1)
+    if stat['stats'] != []:
+        return stat
+    else:
+        return None
     #stat = stat.split()[7:]
-    return stat
+
+
 
 def getTeamId(teamName):
 
@@ -29,6 +34,7 @@ def getRoster(teamId):
     return roster
 
 def splitRoster(roster):
+    print("HIT HIT HIT HIT HIT HIT HIT")
     #grab the string of every player on the team split by line, trying something
     playerTotal = list(roster.split("\n"))
     playerNotParsed = []
@@ -70,7 +76,7 @@ def getplayerCareer(name):
         stat = statsapi.player_stat_data(next(x['id'] for x in statsapi.get('sports_players', {'season': 2022, 'gameType': 'W'})['people'] if x['fullName'] == name), "hitting", "career", sportId=1)
         return stat
     except:
-        return None;
+        return None
 
 
 def getSepcificStat(stats, statName):

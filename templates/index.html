@@ -12,13 +12,20 @@
 -->
 <div class="column is-4 is-offset-4">
     <h3 class="title">Player Look Up</h3>
-<label class="toggle-switch">
-  <input type="checkbox">
-  <span class="slider"></span>
-</label>
-</label>
+     <form method="POST" action="/">
     <div class="box">
-        <form method="POST" action="/">
+        <div class="table">
+            <tr><th2>Career</th2>
+                <th><label class="toggle-switch">
+                    <input type="checkbox" name="csStats" value="season">
+                    <span class="slider"></span>
+                    </label></th>
+                <th2>Season</th2>
+            </tr>
+        </div>
+</div>
+    <div class="box">
+
             <div class="field">
                 <div class="control">
                     <input class="input is-large" type="playerName" name="playerName" placeholder="Player's Name" autofocus="">
