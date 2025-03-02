@@ -14,10 +14,13 @@ BB = 3.09
 
 def getplayer(name, yearlyOrCareer, pos):
     #stat = statsapi.player_stats(next(x['id'] for x in statsapi.get('sports_players', {'season': 2022, 'gameType': 'W'})['people'] if x['fullName'] == name), pos, yearlyOrCareer)
-    stat = statsapi.player_stat_data(next(x['id'] for x in statsapi.get('sports_players', {'season': 2022, 'gameType': 'W'})['people'] if x['fullName'] == name), pos, yearlyOrCareer, sportId=1)
-    if stat['stats'] != []:
-        return stat
-    else:
+    try :
+        stat = statsapi.player_stat_data(next(x['id'] for x in statsapi.get('sports_players', {'season': 2022, 'gameType': 'W'})['people'] if x['fullName'] == name), pos, yearlyOrCareer, sportId=1)
+        if stat['stats'] != []:
+            return stat
+        else:
+            return None
+    except:
         return None
     #stat = stat.split()[7:]
 

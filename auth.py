@@ -13,61 +13,52 @@ change = 0
 teamDic = []
 teamList = []
 context = {}
+# pList = []
+pName = fullname = gamesPlayed = batAvg = hr = so = RBI = ""
+global yearOrCareer
+
+
+def getPlayerListForHome(stats):
+    global fullname, gamesPlayed, batAvg, hr, so, RBI
+    fullname = stats['first_name'] + " " + stats['last_name']
+    stats = stats['stats'][0]['stats']
+    gamesPlayed = stats['gamesPlayed']
+    batAvg = stats['avg']
+    hr = stats['homeRuns']
+    so = stats['strikeOuts']
+    RBI = stats['rbi']
+    print(fullname, gamesPlayed)
+    global pTemp
+    pTemp = fullname
+
 # use decorators to link the function to a url
 @auth.route('/', methods=['GET', 'POST'])
 def index():
     getdata()
-
+    global fullname
     error = None
-    # pList = []
-    pName = ''
-    fullname = ''
-    gamesPlayed = ''
-    batAvg = ''
-    hr = ''
-    so = ''
-    RBI = ''
-    yearOrCareer = "No"
-    print(request.url)
     if "name" in str(request.url):
         name = str(request.url).split("name=",1)[1]
         name = name.replace("+", " ")
-        print(name)
-        print(("HIT HIT HIT HIT"))
         stats = getplayerCareer(name)
         if (stats != None):
-            fullname = stats['first_name'] + " " + stats['last_name']
-            stats = stats['stats'][0]['stats']
-            gamesPlayed = stats['gamesPlayed']
-            batAvg = stats['avg']
-            hr = stats['homeRuns']
-            so = stats['strikeOuts']
-            RBI = stats['rbi']
-            global pTemp
-            pTemp = fullname
+           getPlayerListForHome(stats)
         return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
                                homeruns=hr, strikeouts=so, rbi=RBI)
-
     if request.method == 'POST':
         if request.form.get('csStats') == 'season':
             yearOrCareer = "season"
         else:
             yearOrCareer = "career"
-
     if request.method == 'POST':
         if request.form['btn_identifier'] == 'search':
             pName = request.form['playerName']
             stats = Function.getplayer(pName, yearOrCareer, "hitting")
             if(stats != None):
-                fullname = stats['first_name'] + " " + stats['last_name']
-                stats = stats['stats'][0]['stats']
-                gamesPlayed = stats['gamesPlayed']
-                batAvg = stats['avg']
-                hr = stats['homeRuns']
-                so = stats['strikeOuts']
-                RBI = stats['rbi']
-                pTemp
-                pTemp = fullname
+               getPlayerListForHome(stats)
+               print(fullname)
+               return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
+                                      homeruns=hr, strikeouts=so, rbi=RBI)
             else:
                 fullname = "SEASON HAS NOT STARTED YET NO DATA"
             return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
@@ -177,43 +168,19 @@ def lineup(name):
     # players = createLinup(["Aaron Judge", "Anthony Rizzo", "Kyle Higashioka","Andrew Benintendi", "Aaron Hicks","Jose Trevino","Tim Locastro","Josh Donaldson", "Harrison Bader"])
     # return render_template('lineup.html', player1 = players[0], player2 = players[1], player3 = players[2], player4 = players[3], player5 = players[4], player6 = players[5], player7 = players[6], player8 = players[7], player9 = players[8])
     error = None
-    global pList
-    pName = ''
-    fullname = ''
-    gamesPlayed = ''
-    batAvg = ''
-    hr = ''
-    so = ''
-    RBI = ''
-    global pTemp
-
+    global fullname, gamesPlayed, batAvg, hr, so, RBI
     if name is not None:
         pName = name
         stats = getplayerCareer(pName)
-        fullname = stats['first_name'] + " " + stats['last_name']
-        stats = stats['stats'][0]['stats']
-        gamesPlayed = stats['gamesPlayed']
-        batAvg = stats['avg']
-        hr = stats['homeRuns']
-        so = stats['strikeOuts']
-        RBI = stats['rbi']
-        pTemp = fullname
+        getPlayerListForHome(stats)
         return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
                                homeruns=hr, strikeouts=so, rbi=RBI)
     if request.method == 'POST':
         if request.form['btn_identifier'] == 'search':
             pName = request.form['playerName']
             stats = getplayerCareer(pName)
-
             if stats is not None:
-                fullname = stats['first_name'] + " " + stats['last_name']
-                stats = stats['stats'][0]['stats']
-                gamesPlayed = stats['gamesPlayed']
-                batAvg = stats['avg']
-                hr = stats['homeRuns']
-                so = stats['strikeOuts']
-                RBI = stats['rbi']
-                pTemp = fullname
+                getPlayerListForHome(stats)
             if len(pList) == 1:
                 return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
                                        batAvg=batAvg,
@@ -263,9 +230,6 @@ def lineup(name):
             return render_template('lineup.html', error = error, name = fullname, gamesPlayed = gamesPlayed, batAvg = batAvg, homeruns = hr, strikeouts = so, rbi = RBI)
 
         elif request.form['btn_identifier'] == 'add':
-            # pName = request.form['playerName']
-            # stats = getplayerCareer(pName)
-            # fullname = stats['first_name'] + " " + stats['last_name']
             if len(pList) < 9:
                 pList.append(pTemp)
             # error, too many players in lineup, max is 9
@@ -314,11 +278,12 @@ def lineup(name):
                                        homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
                                        p4=pList[3], p5=pList[4],
                                        p6=pList[5], p7=pList[6], p8=pList[7], p9=pList[8])
+        elif request.form['btn_identifier'] == 'clear':
+            pList.clear()
         elif request.form['btn_identifier'] == 'submit':
             if (1):
                 return redirect('/sortedLineup')
             else:
-                # return error statement
                 return render_template('lineup.html', error=error)
         else:
             return render_template('lineup.html', error=error)
@@ -332,8 +297,10 @@ def sortedLineup():
     # Display sorted pList
     global pList
     sList = createLineup(pList)
+    pList.clear()
     return render_template('sortedLineup.html', p1=sList[0], p2=sList[1], p3=sList[2], p4=sList[3], p5=sList[4],
                            p6=sList[5], p7=sList[6], p8=sList[7], p9=sList[8])
+
 
 
 @auth.route('/team/<name>', methods=['GET', 'POST'])
