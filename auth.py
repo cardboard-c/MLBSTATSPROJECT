@@ -20,6 +20,7 @@ global yearOrCareer
 
 
 def getPlayerListForHome(stats):
+    getdata()
     global fullname, gamesPlayed, batAvg, hr, so, RBI
     fullname = stats['first_name'] + " " + stats['last_name']
     stats = stats['stats'][0]['stats']
@@ -35,7 +36,6 @@ def getPlayerListForHome(stats):
 # use decorators to link the function to a url
 @auth.route('/', methods=['GET', 'POST'])
 def index():
-    getdata()
     global fullname
     error = None
     if "name" in str(request.url):
@@ -299,10 +299,10 @@ def sortedLineup():
     global pList
     sList = createLineup(pList)
     pList.clear()
-    try:
+    if sList is not None:
         return render_template('sortedLineup.html', p1=sList[0], p2=sList[1], p3=sList[2], p4=sList[3], p5=sList[4],
                         p6=sList[5], p7=sList[6], p8=sList[7], p9=sList[8])
-    except TypeError:
+    else:
        return render_template('lineup.html',p1='Invalid lineup please input 9 players')
 
 

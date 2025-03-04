@@ -123,9 +123,8 @@ def sortByAVG(playerList, names):
     AVGList = {}
     sortedDic = {}
     for i in range(9):
-        AVGList[names[i]]= getSepcificStatNum(playerList[i],"avg")
+        AVGList[names[i]] = getSepcificStatNum(playerList[i],"avg")
     sortedList = sorted(AVGList, key=AVGList.get, reverse=True)
-
     for i in sortedList:
         sortedDic[i] = AVGList[i]
     print(sortedDic)
@@ -135,20 +134,19 @@ def sortByAVG(playerList, names):
 def createPlayerList(names):
     playerList = []
     for i in range(9):
-        try:
-            playerList.append(getplayer(names[i], "career", "hitting"))
-            return playerList
-        except:
-            return None
+        playerList.append(getplayer(names[i], "career", "hitting"))
+    return playerList
+
 
 #TODO Make this better more ideal lineup and not just sort by avg
 def createLineup(names):
-    playerList = createPlayerList(names)
-    if len(playerList) == 9:
+    if len(names) == 9:
+        playerList = createPlayerList(names)
         lineUp = sortByAVG(playerList, names)
         return lineUp
     else:
         return None
+
 
 
 
