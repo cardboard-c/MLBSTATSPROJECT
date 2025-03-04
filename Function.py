@@ -135,14 +135,20 @@ def sortByAVG(playerList, names):
 def createPlayerList(names):
     playerList = []
     for i in range(9):
-        playerList.append(getplayer(names[i], "career", "hitting"))
-    return playerList
+        try:
+            playerList.append(getplayer(names[i], "career", "hitting"))
+            return playerList
+        except:
+            return None
 
 #TODO Make this better more ideal lineup and not just sort by avg
 def createLineup(names):
     playerList = createPlayerList(names)
-    lineUp = sortByAVG(playerList, names)
-    return lineUp
+    if len(playerList) == 9:
+        lineUp = sortByAVG(playerList, names)
+        return lineUp
+    else:
+        return None
 
 
 

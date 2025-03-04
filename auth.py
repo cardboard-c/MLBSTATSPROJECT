@@ -1,5 +1,6 @@
 # This file is used for setting up web pages, all addresses should be put here
 from flask import Flask, render_template, Blueprint, redirect, url_for, request
+from flask import *
 from testing import getdata
 import Function
 
@@ -298,8 +299,11 @@ def sortedLineup():
     global pList
     sList = createLineup(pList)
     pList.clear()
-    return render_template('sortedLineup.html', p1=sList[0], p2=sList[1], p3=sList[2], p4=sList[3], p5=sList[4],
-                           p6=sList[5], p7=sList[6], p8=sList[7], p9=sList[8])
+    try:
+        return render_template('sortedLineup.html', p1=sList[0], p2=sList[1], p3=sList[2], p4=sList[3], p5=sList[4],
+                        p6=sList[5], p7=sList[6], p8=sList[7], p9=sList[8])
+    except TypeError:
+       return render_template('lineup.html',p1='Invalid lineup please input 9 players')
 
 
 
