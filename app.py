@@ -15,7 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 db.init_app(app)
 
 # blueprint for auth routes in our app
-from auth import auth as auth_blueprint
+from Page_Render import auth as auth_blueprint
 
 app.register_blueprint(auth_blueprint)
 

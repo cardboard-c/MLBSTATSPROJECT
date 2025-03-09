@@ -163,6 +163,65 @@ def profile():
     return render_template('profile.html')
 
 
+#This populates the lineup page so it is not duplicated in lineup function
+def populateAndRefresh():
+    error = None
+    global pList
+    global fullname, gamesPlayed, batAvg, hr, so, RBI
+    print(len(pList))
+    if len(pList) == 1:
+        return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
+                               batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0],
+                               )
+    elif len(pList) == 2:
+        return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
+                               batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1])
+    elif len(pList) == 3:
+        return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
+                               batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2])
+    elif len(pList) == 4:
+        return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
+                               batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
+                               p4=pList[3])
+    elif len(pList) == 5:
+        return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
+                               batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
+                               p4=pList[3], p5=pList[4])
+    elif len(pList) == 6:
+        return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
+                               batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
+                               p4=pList[3], p5=pList[4], p6=pList[5])
+    elif len(pList) == 7:
+        return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
+                               batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
+                               p4=pList[3], p5=pList[4],
+                               p6=pList[5], p7=pList[6])
+    elif len(pList) == 8:
+        return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
+                               batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
+                               p4=pList[3], p5=pList[4],
+                               p6=pList[5], p7=pList[6], p8=pList[7])
+    elif len(pList) == 9:
+        return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
+                               batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
+                               p4=pList[3], p5=pList[4],
+                               p6=pList[5], p7=pList[6], p8=pList[7], p9=pList[8])
+    elif len(pList) == 0:
+        return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
+                               batAvg=batAvg,
+                               homeruns=hr, strikeouts=so, rbi=RBI)
+
+
+
 @auth.route('/lineup/', defaults={'name': None}, methods=['GET', 'POST'])
 @auth.route('/lineup/<name>', methods=['GET', 'POST'])
 def lineup(name):
@@ -182,105 +241,19 @@ def lineup(name):
             stats = getplayerCareer(pName)
             if stats is not None:
                 getPlayerListForHome(stats)
-            if len(pList) == 1:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0],
-                                       )
-            elif len(pList) == 2:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1])
-            elif len(pList) == 3:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2])
-            elif len(pList) == 4:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3])
-            elif len(pList) == 5:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3], p5=pList[4])
-            elif len(pList) == 6:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3], p5=pList[4], p6=pList[5])
-            elif len(pList) == 7:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3], p5=pList[4],
-                                       p6=pList[5], p7=pList[6])
-            elif len(pList) == 8:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3], p5=pList[4],
-                                       p6=pList[5], p7=pList[6], p8=pList[7])
-            elif len(pList) == 9:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3], p5=pList[4],
-                                       p6=pList[5], p7=pList[6], p8=pList[7], p9=pList[8])
-            return render_template('lineup.html', error = error, name = fullname, gamesPlayed = gamesPlayed, batAvg = batAvg, homeruns = hr, strikeouts = so, rbi = RBI)
-
+                populateAndRefresh()
+            return populateAndRefresh()
         elif request.form['btn_identifier'] == 'add':
             if len(pList) < 9:
                 pList.append(pTemp)
+            return populateAndRefresh()
             # error, too many players in lineup, max is 9
-            if len(pList) == 1:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0])
-            elif len(pList) == 2:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1])
-            elif len(pList) == 3:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2])
-            elif len(pList) == 4:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3])
-            elif len(pList) == 5:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3], p5=pList[4])
-            elif len(pList) == 6:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3], p5=pList[4], p6=pList[5])
-            elif len(pList) == 7:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3], p5=pList[4],
-                                       p6=pList[5], p7=pList[6])
-            elif len(pList) == 8:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3], p5=pList[4],
-                                       p6=pList[5], p7=pList[6], p8=pList[7])
-            elif len(pList) == 9:
-                return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed,
-                                       batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI, p1=pList[0], p2=pList[1], p3=pList[2],
-                                       p4=pList[3], p5=pList[4],
-                                       p6=pList[5], p7=pList[6], p8=pList[7], p9=pList[8])
         elif request.form['btn_identifier'] == 'clear':
             pList.clear()
+            return populateAndRefresh()
+        elif request.form['btn_identifier'] == 'Delete Player':
+            pList.pop()
+            return populateAndRefresh()
         elif request.form['btn_identifier'] == 'submit':
             if (1):
                 return redirect('/sortedLineup')
