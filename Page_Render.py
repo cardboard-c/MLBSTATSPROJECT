@@ -44,8 +44,12 @@ def index():
         stats = getplayerCareer(name)
         if (stats != None):
            getPlayerListForHome(stats)
-        return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
-                               homeruns=hr, strikeouts=so, rbi=RBI)
+           return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
+                                  homeruns=hr, strikeouts=so, rbi=RBI)
+        else:
+            fullname = 'DATA FOR PLAYER NOT FOUND PLEASE TRY AGAIN'
+            return render_template('index.html', error=error, name=fullname, gamesPlayed="", batAvg="",
+                                   homeruns="", strikeouts="", rbi="")
     if request.method == 'POST':
         if request.form.get('csStats') == 'season':
             yearOrCareer = "season"
@@ -61,9 +65,9 @@ def index():
                return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
                                       homeruns=hr, strikeouts=so, rbi=RBI)
             else:
-                fullname = "SEASON HAS NOT STARTED YET NO DATA"
-            return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
-                                       homeruns=hr, strikeouts=so, rbi=RBI)
+                fullname = "DATA FOR PLAYER NOT FOUND PLEASE TRY AGAIN"
+            return render_template('index.html', error=error, name=fullname, gamesPlayed="", batAvg="",
+                                   homeruns="", strikeouts="", rbi="")
         else:
             return render_template('index.html', error=error)
 
