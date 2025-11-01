@@ -1,5 +1,6 @@
 import statsapi
-from datetime import datetime
+from datetime import datetime, timedelta
+from functools import lru_cache
 from operator import itemgetter
 import logging
 ##League year by year averages for 30 plate apperances(also the average)
@@ -12,17 +13,64 @@ RBI = 4.09
 BB = 3.09
 
 
-def getplayer(name, yearlyOrCareer, pos):
-    #stat = statsapi.player_stats(next(x['id'] for x in statsapi.get('sports_players', {'season': 2022, 'gameType': 'W'})['people'] if x['fullName'] == name), pos, yearlyOrCareer)
-    try :
-        stat = statsapi.player_stat_data(next(x['id'] for x in statsapi.get('sports_players', {'season': 2022, 'gameType': 'W'})['people'] if x['fullName'] == name), pos, yearlyOrCareer, sportId=1)
-        if stat['stats'] != []:
-            return stat
-        else:
-            return None
-    except:
+_players_map = {}
+_players_loaded_at = None
+_PLAYERS_TTL = timedelta(hours=6)  # refresh players list every 6 hours (adjustable)
+
+
+def _ensure_players_loaded(season=datetime.now().year, force_refresh=False):
+    global _players_map, _players_loaded_at
+    now = datetime.now()
+    if force_refresh or _players_loaded_at is None or (now - _players_loaded_at) > _PLAYERS_TTL:
+        try:
+            resp = statsapi.get('sports_players', {'season': season, 'gameType': 'W'})
+          ##  print(resp)
+           ## print(statsapi.get('sports_players', {'season': 2022, 'gameType': 'W'}))
+            people = resp.get('people', []) if isinstance(resp, dict) else []
+            # build name -> id map using normalized full name
+            _players_map = {p.get('fullName', '').strip().lower(): p.get('id') for p in people if p.get('fullName')}
+            _players_loaded_at = now
+            logging.debug("Loaded %d players for season %s", len(_players_map), season)
+        except Exception:
+            logging.exception("Failed to load players list from statsapi")
+            _players_map = {}
+
+
+@lru_cache(maxsize=512)
+def _get_player_stat_cached(player_id, pos, yearly_or_career, sportId=1):
+    """
+    Cached wrapper around statsapi.player_stat_data.
+    Keyed by player_id, pos, yearly_or_career to avoid repeated network calls.
+    """
+    try:
+        return statsapi.player_stat_data(player_id, pos, yearly_or_career, sportId=sportId)
+    except Exception:
+        logging.exception("Failed to fetch stats for player id %s", player_id)
         return None
-    #stat = stat.split()[7:]
+
+
+def getplayer(name, yearlyOrCareer, pos, season=datetime.now().year, force_refresh_players=False):
+    """
+    Faster getplayer:
+    - loads player id map once per TTL (or on force_refresh)
+    - uses an LRU cache for `player_stat_data` results
+    Returns the stat dict or None.
+    """
+    if not name:
+        return None
+
+    _ensure_players_loaded(season=season, force_refresh=force_refresh_players)
+    player_id = _players_map.get(name.strip().lower())
+    if not player_id:
+        logging.debug("Player not found in cached map: %s", name)
+        return None
+
+    stat = _get_player_stat_cached(player_id, pos, yearlyOrCareer, sportId=1)
+    # keep previous behavior: return None if no stats or empty
+    if not stat or stat.get('stats') == []:
+        return None
+    return stat
+
 
 
 

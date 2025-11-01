@@ -4,7 +4,7 @@ from flask import *
 from testing import getdata
 import Function
 
-from Function import createLineup, getplayerCareer, getTeamId, getRoster, splitRoster, getNames
+from Function import createLineup, getplayer, getTeamId, getRoster, splitRoster, getNames
 
 auth = Blueprint('auth', __name__)
 
@@ -19,19 +19,47 @@ pName = fullname = gamesPlayed = batAvg = hr = so = RBI = ""
 global yearOrCareer
 
 
+# python
 def getPlayerListForHome(stats):
-    getdata()
-    global fullname, gamesPlayed, batAvg, hr, so, RBI
-    fullname = stats['first_name'] + " " + stats['last_name']
-    stats = stats['stats'][0]['stats']
-    gamesPlayed = stats['gamesPlayed']
-    batAvg = stats['avg']
-    hr = stats['homeRuns']
-    so = stats['strikeOuts']
-    RBI = stats['rbi']
+    ##getdata()
+    global fullname, gamesPlayed, batAvg, hr, so, RBI, pTemp
+    print("step 1")
+    # Validate input shape
+    if not stats or not isinstance(stats, dict):
+        fullname = "DATA FOR PLAYER NOT FOUND PLEASE TRY AGAIN"
+        gamesPlayed = batAvg = hr = so = RBI = ""
+        pTemp = fullname
+        return None
+    print("step 2")
+    # Normalize name fields (accept multiple possible keys)
+    first = stats.get('first_name') or stats.get('firstName') or ""
+    last = stats.get('last_name') or stats.get('lastName') or ""
+    fullname = f"{first} {last}".strip()
+    print("step 3")
+    # Safely extract the stats block
+    stats_list = stats.get('stats') or []
+    if not isinstance(stats_list, list) or len(stats_list) == 0:
+        gamesPlayed = batAvg = hr = so = RBI = ""
+        pTemp = fullname
+        return None
+
+    inner = stats_list[0]
+    inner_stats = inner.get('stats') if isinstance(inner, dict) else None
+    if not inner_stats or not isinstance(inner_stats, dict):
+        gamesPlayed = batAvg = hr = so = RBI = ""
+        pTemp = fullname
+        return None
+
+    # Populate globals with safe defaults
+    gamesPlayed = inner_stats.get('gamesPlayed', "")
+    batAvg = inner_stats.get('avg', "")
+    hr = inner_stats.get('homeRuns', "")
+    so = inner_stats.get('strikeOuts', "")
+    RBI = inner_stats.get('rbi', "")
+
     print(fullname, gamesPlayed)
-    global pTemp
     pTemp = fullname
+    return True
 
 # use decorators to link the function to a url
 @auth.route('/', methods=['GET', 'POST'])
@@ -41,7 +69,7 @@ def index():
     if "name" in str(request.url):
         name = str(request.url).split("name=",1)[1]
         name = name.replace("+", " ")
-        stats = getplayerCareer(name)
+        stats = getplayer(name, "career", "hitting")
         if (stats != None):
            getPlayerListForHome(stats)
            return render_template('index.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
@@ -59,6 +87,7 @@ def index():
         if request.form['btn_identifier'] == 'search':
             pName = request.form['playerName']
             stats = Function.getplayer(pName, yearOrCareer, "hitting")
+            print(stats)
             if(stats != None):
                getPlayerListForHome(stats)
                print(fullname)
@@ -235,14 +264,14 @@ def lineup(name):
     global fullname, gamesPlayed, batAvg, hr, so, RBI
     if name is not None:
         pName = name
-        stats = getplayerCareer(pName)
+        stats = getplayer(pName, "career", "hitting")
         getPlayerListForHome(stats)
         return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
                                homeruns=hr, strikeouts=so, rbi=RBI)
     if request.method == 'POST':
         if request.form['btn_identifier'] == 'search':
             pName = request.form['playerName']
-            stats = getplayerCareer(pName)
+            stats = getplayer(pName, "career", "hitting")
             if stats is not None:
                 getPlayerListForHome(stats)
                 populateAndRefresh()
