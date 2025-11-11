@@ -1,93 +1,237 @@
-<!DOCTYPE html>
-{% extends "base.html" %}
-{% block content %}
-<div class="column is-4 is-offset-4">
-    <h3 class="title">Player Look Up</h3>
-    <div class="box">
-        <form method="POST" action="/lineup">
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="playerName" name="playerName" placeholder="Player's Name" autofocus="">
-                </div>
-            </div>
-            <input type="hidden" name="btn_identifier" value="search" />
-            <button class="button is-block is-info is-large is-fullwidth">Submit</button>
-            <table>
-                 <tr>
-    <td>Player Name:</td>
-    <td> {{name}} </td>
-  </tr>
-  <tr>
-    <td>Games Played: </td>
-    <td> {{gamesPlayed}} </td>
-  </tr>
-  <tr>
-    <td>Batting Average:</td>
-    <td> {{batAvg}} </td>
-  </tr>
-  <tr>
-    <td>HomeRuns: </td>
-    <td> {{homeruns}}  </td>
-  </tr>
-  <tr>
-    <td>Strike Outs:</td>
-    <td> {{strikeouts}}  </td>
-  </tr>
-  <tr>
-    <td>RBI:</td>
-    <td> {{rbi}} </td>
-  </tr>
-</table>
-        </form>
-        <h3 class="title">Custom Lineup</h3>
-        <form method="POST" action="/lineup">
-            <input type="hidden" name="btn_identifier" value="add" />
-            <button class="button is-block is-info is-large is-fullwidth">Add Player</button>
-            <table>
-            <tr>
-                <th>1. {{p1}}</th>
-            </tr>
-            <tr>
-                <th>2. {{p2}}</th>
-            </tr>
-            <tr>
-                <th>3. {{p3}}</th>
-            </tr>
-            <tr>
-                <th>4. {{p4}}</th>
-            </tr>
-            <tr>
-                <th>5. {{p5}}</th>
-            </tr>
-            <tr>
-                <th>6. {{p6}}</th>
-            </tr>
-            <tr>
-                <th>7. {{p7}}</th>
-            </tr>
-            <tr>
-                <th>8. {{p8}}</th>
-            </tr>
-            <tr>
-                <th>9. {{p9}}</th>
-            </tr>
+<!-- html -->
+                    <!-- file: `templates/lineup.html` -->
+                    {% extends "base.html" %}
 
-        </table>
-        </form>
-    </div>
-    <form method="POST" action="/lineup">
-        <input type="hidden" name="btn_identifier" value="submit" />
-        <button class="button is-block is-info is-large is-fullwidth">Submit Lineup</button>
-    </form>
-     <form method="POST" action="/lineup">
-        <input type="hidden" name="btn_identifier" value="clear" />
-        <button class="button is-block is-info is-large is-fullwidth">Clear Lineup</button>
-    </form>
-      </form>
-     <form method="POST" action="/lineup">
-        <input type="hidden" name="btn_identifier" value="Delete Player" />
-        <button class="button is-block is-info is-large is-fullwidth">Delete Player</button>
-    </form>
+                    {% block content %}
+                      <form id="lineup-search-form" method="POST" action="/lineup" class="field has-addons" style="display:flex;align-items:center; gap:0.5rem; margin-top:1rem;">
+                        <label class="sr-only" for="playerName">Player Name</label>
+                        <div class="control" style="flex:1;">
+                          <input id="playerName" class="input is-medium" type="text" name="playerName"
+                                 placeholder="Player's Name — e.g., Jose Trevino" required
+                                 value="{{ request.form.playerName if request.form.playerName is defined else name if name is defined else '' }}">
+                        </div>
 
-</div>
-{% endblock %}
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                     <label class="checkbox" style="margin:0;">
+                        <input type="checkbox" name="csStats" value="season" {% if csStats %}checked{% endif %}>
+                             Season
+                        </label>
+                          <input type="hidden" name="btn_identifier" value="search">
+
+                          <!-- preserve current lineup slots -->
+                          <input type="hidden" name="p1" value="{{ p1 | default('') }}">
+                          <input type="hidden" name="p2" value="{{ p2 | default('') }}">
+                          <input type="hidden" name="p3" value="{{ p3 | default('') }}">
+                          <input type="hidden" name="p4" value="{{ p4 | default('') }}">
+                          <input type="hidden" name="p5" value="{{ p5 | default('') }}">
+                          <input type="hidden" name="p6" value="{{ p6 | default('') }}">
+                          <input type="hidden" name="p7" value="{{ p7 | default('') }}">
+                          <input type="hidden" name="p8" value="{{ p8 | default('') }}">
+                          <input type="hidden" name="p9" value="{{ p9 | default('') }}">
+
+                          <button class="button is-info is-medium" type="submit">
+                            <span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span><span> Search</span>
+                          </button>
+                        </div>
+                      </form>
+
+                      <div class="columns is-centered" style="margin-top:1rem;">
+                        <div class="column is-8">
+                          <div class="card player-card">
+                            <div class="card-content">
+                              {% if player or name %}
+                              <div class="columns is-vcentered is-multiline">
+                                <div class="column is-3-tablet is-2-desktop has-text-centered">
+                                  <div class="avatar" aria-hidden="true">
+                                    {% if player and player.first_name and player.last_name %}
+                                      {{ player.first_name[0] }}{{ player.last_name[0] }}
+                                    {% elif name %}
+                                      {{ name.split(' ')[0][0] ~ (name.split(' ')[1][0] if name.split(' ')|length > 1 else '') }}
+                                    {% else %}
+                                      --
+                                    {% endif %}
+                                  </div>
+                                  <div style="margin-top:8px;">
+                                    <div style="display:flex;justify-content:center;">
+                                      <span class="tag is-light">{{ (player.position if player else position) | default('—') }}</span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="column is-5-tablet is-6-desktop">
+                                  <h2 class="title is-4" style="margin-bottom:0;">
+                                    {% if player %}{{ player.first_name }} {{ player.last_name }}{% else %}{{ name }}{% endif %}
+                                  </h2>
+
+                                  <p class="muted" style="margin-bottom:0.5rem;">
+                                    {% if player and player.current_team %}<strong>{{ player.current_team }}</strong> • {% endif %}
+                                    MLB Debut:
+                                    <span class="tag is-light is-small">{{ player.mlb_debut if player and player.mlb_debut else season_debut if season_debut else 'N/A' }}</span>
+                                  </p>
+
+                                  <p class="muted">Nickname:
+                                    <span class="tag is-info is-light is-small">{{ player.nickname if player and player.nickname else '—' }}</span>
+                                  </p>
+
+                                  <div class="columns is-mobile is-multiline" style="margin-top:0.5rem;">
+                                    <div class="column is-4 stat-tile">
+                                      <div class="has-text-weight-semibold is-size-5">
+                                        {{ gamesPlayed if gamesPlayed is defined else (player.stats[0].stats.gamesPlayed if player and player.stats else '—') }}
+                                      </div>
+                                      <div class="muted">Games</div>
+                                    </div>
+
+                                    <div class="column is-4 stat-tile">
+                                      <div class="has-text-weight-semibold is-size-5">
+                                        {{ batAvg if batAvg is defined else (player.stats[0].stats.avg if player and player.stats else '—') }}
+                                      </div>
+                                      <div class="muted">AVG</div>
+                                    </div>
+
+                                    <div class="column is-4 stat-tile">
+                                      <div class="has-text-weight-semibold is-size-5">
+                                        {{ homeruns if homeruns is defined else (player.stats[0].stats.homeRuns if player and player.stats else '—') }}
+                                      </div>
+                                      <div class="muted">HR</div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="column is-4-tablet is-4-desktop">
+                                  <div class="muted">RBI</div>
+                                  <div class="has-text-weight-semibold is-size-4">
+                                    {{ rbi if rbi is defined else (player.stats[0].stats.rbi if player and player.stats else '—') }}
+                                  </div>
+
+                                  <div style="margin-top:0.75rem;">
+                                    <div class="muted">Power Index</div>
+                                    <progress class="progress is-primary progress-small"
+                                              value="{% if player and player.stats and player.stats[0].stats.homeRuns %}{{ (player.stats[0].stats.homeRuns|int / 40) | round(2, 'floor') }}{% elif homeruns is defined %}{{ (homeruns|int / 40) | round(2, 'floor') }}{% else %}0{% endif %}"
+                                              max="1"></progress>
+
+                                    <div class="muted" style="font-size:0.85rem;">
+                                      Contact / Eye:
+                                      <strong>{{ player.stats[0].stats.avg if player and player.stats else (batAvg if batAvg is defined else '—') }}</strong>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="column is-12">
+                                  <hr>
+                                  <h3 class="title is-6" style="margin-bottom:0.25rem;">Detailed Stats</h3>
+                                  <p class="muted">Career / Season summary</p>
+
+                                  <div class="table-container" style="margin-top:0.75rem;">
+                                    <table class="table is-fullwidth is-hoverable">
+                                      <thead>
+                                        <tr>
+                                          <th>Metric</th>
+                                          <th class="has-text-right">Value</th>
+                                          <th class="has-text-right">Notes</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr>
+                                          <td>Games Played</td>
+                                          <td class="has-text-right">{{ gamesPlayed if gamesPlayed is defined else (player.stats[0].stats.gamesPlayed if player and player.stats else '—') }}</td>
+                                          <td class="has-text-right muted">Career</td>
+                                        </tr>
+                                        <tr>
+                                          <td>Batting Average</td>
+                                          <td class="has-text-right">{{ batAvg if batAvg is defined else (player.stats[0].stats.avg if player and player.stats else '—') }}</td>
+                                          <td class="has-text-right muted">AVG (career)</td>
+                                        </tr>
+                                        <tr>
+                                          <td>Home Runs</td>
+                                          <td class="has-text-right">{{ homeruns if homeruns is defined else (player.stats[0].stats.homeRuns if player and player.stats else '—') }}</td>
+                                          <td class="has-text-right muted">Power</td>
+                                        </tr>
+                                        <tr>
+                                          <td>Strikeouts</td>
+                                          <td class="has-text-right">{{ strikeouts if strikeouts is defined else (player.stats[0].stats.strikeOuts if player and player.stats else '—') }}</td>
+                                          <td class="has-text-right muted">Discipline</td>
+                                        </tr>
+                                        <tr>
+                                          <td>RBI</td>
+                                          <td class="has-text-right">{{ rbi if rbi is defined else (player.stats[0].stats.rbi if player and player.stats else '—') }}</td>
+                                          <td class="has-text-right muted">Run production</td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                              {% else %}
+                              <div class="content has-text-centered">
+                                <p class="muted">No player selected. Use the search above to lookup a player.</p>
+                              </div>
+                              {% endif %}
+                            </div>
+                          </div>
+
+                          <div class="card player-card" style="margin-top:1rem;">
+                            <div class="card-content">
+                              <h3 class="title is-5">Custom Lineup</h3>
+
+                              <form method="POST" action="/lineup" style="margin-bottom:0.75rem;">
+                                <input type="hidden" name="btn_identifier" value="add" />
+                                <button class="button is-info" type="submit"><span class="icon"><i class="fa-solid fa-plus"></i></span><span> Add Player</span></button>
+                              </form>
+
+                              <table class="table is-fullwidth">
+                                <tbody>
+                                  <tr><th>1. {{ p1 }}</th></tr>
+                                  <tr><th>2. {{ p2 }}</th></tr>
+                                  <tr><th>3. {{ p3 }}</th></tr>
+                                  <tr><th>4. {{ p4 }}</th></tr>
+                                  <tr><th>5. {{ p5 }}</th></tr>
+                                  <tr><th>6. {{ p6 }}</th></tr>
+                                  <tr><th>7. {{ p7 }}</th></tr>
+                                  <tr><th>8. {{ p8 }}</th></tr>
+                                  <tr><th>9. {{ p9 }}</th></tr>
+                                </tbody>
+                              </table>
+
+                              <div class="buttons" style="margin-top:0.75rem;">
+                                <form method="POST" action="/lineup" style="display:inline-block; margin-right:0.5rem;">
+                                  <input type="hidden" name="btn_identifier" value="submit" />
+                                  <button class="button is-info" type="submit">Submit Lineup</button>
+                                </form>
+
+                                <form method="POST" action="/lineup" style="display:inline-block; margin-right:0.5rem;">
+                                  <input type="hidden" name="btn_identifier" value="clear" />
+                                  <button class="button is-light" type="submit">Clear Lineup</button>
+                                </form>
+
+                                <form method="POST" action="/lineup" style="display:inline-block;">
+                                  <input type="hidden" name="btn_identifier" value="Delete Player" />
+                                  <button class="button is-light" type="submit">Delete Player</button>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                          const hero = document.querySelector('.hero');
+                          const baseForm = hero ? hero.querySelector('form') : null;
+                          const lineupForm = document.getElementById('lineup-search-form');
+
+                          if (lineupForm && hero) {
+                            lineupForm.style.display = 'flex';
+                            if (baseForm) {
+                              baseForm.replaceWith(lineupForm);
+                            } else {
+                              const heroHead = hero.querySelector('.hero-head');
+                              if (heroHead && heroHead.nextSibling) {
+                                heroHead.parentNode.insertBefore(lineupForm, heroHead.nextSibling);
+                              } else {
+                                hero.appendChild(lineupForm);
+                              }
+                            }
+                          }
+                        });
+                      </script>
+                    {% endblock %}

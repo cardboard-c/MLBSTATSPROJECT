@@ -1,68 +1,335 @@
-{% extends "base.html" %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Player Lookup</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .hero-gradient {
+      background: linear-gradient(135deg,#0f172a 0%, #0b84ff 50%, #00d4ff 100%);
+      color: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(6,22,43,0.5);
+      padding: 2rem;
+    }
+    .player-card {
+      transform: none;
+      margin-top: 1.25rem;
+      box-shadow: 0 8px 24px rgba(16,24,40,0.2);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,#ffffff22,#ffffff11);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      color:white;
+      font-size:28px;
+      border: 3px solid rgba(255,255,255,0.08);
+      margin: 0 auto;
+    }
+    .stat-tile {
+      min-height: 88px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:4px;
+      text-align:center;
+    }
+    .progress-small {
+      height: 8px;
+      border-radius: 8px;
+      overflow:hidden;
+    }
+    .muted { color: #7a869a; font-size:0.9rem; }
+    @media (max-width: 768px) {
+      .player-card { margin-top: 1rem; }
+    }
+    .sr-only {
+      position:absolute !important;
+      width:1px !important;
+      height:1px !important;
+      padding:0 !important;
+      margin:-1px !important;
+      overflow:hidden !important;
+      clip:rect(0,0,0,0) !important;
+      white-space:nowrap !important;
+      border:0 !important;
+    }
 
-{% block content %}
-
-<h1 class="title">
-  Welcome
-</h1>
-<!--
-<h2 class="subtitle">
-  Call function to display stats
-</h2>
--->
-<div class="column is-4 is-offset-4">
-    <h3 class="title">Player Look Up</h3>
-     <form method="POST" action="/">
-    <div class="box">
-        <div class="table">
-            <tr><th2>Career</th2>
-                <th><label class="toggle-switch">
-                    <input type="checkbox" name="csStats" value="season">
-                    <span class="slider"></span>
-                    </label></th>
-                <th2>Season</th2>
-            </tr>
+    /* Clean navbar styles */
+    .navbar.clean-nav {
+      background: rgba(255,255,255,0.04);
+      padding: 0.35rem 0.75rem;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(2,6,23,0.28);
+      backdrop-filter: blur(6px);
+      margin-bottom: 0.75rem;
+    }
+    .navbar.clean-nav .navbar-item {
+      color: #eaf7ff;
+      padding: 0.45rem 0.7rem;
+      border-radius: 6px;
+      transition: background .12s ease, color .12s ease, transform .12s ease;
+      font-weight: 500;
+    }
+    .navbar.clean-nav .navbar-item:hover {
+      background: rgba(255,255,255,0.04);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+    .navbar.clean-nav .navbar-item.is-active {
+      background: rgba(255,255,255,0.10);
+      color: #fff;
+      box-shadow: inset 0 -2px 0 rgba(255,255,255,0.06);
+    }
+    .navbar.clean-nav .navbar-brand .navbar-item {
+      font-weight: 700;
+      color: #fff;
+    }
+    .navbar.clean-nav .icon { color: #fff; }
+    .navbar.clean-nav .navbar-burger { color: #fff; }
+    @media (max-width: 768px) {
+      .navbar.clean-nav { padding: 0.25rem 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+<section class="section">
+  <div class="container">
+    <div class="hero hero-gradient">
+      <div class="columns is-vcentered is-mobile">
+        <div class="column">
+          <h1 class="title is-3" style="color: #fff">Baseball Lookup</h1>
+          <p class="subtitle is-6" style="color: #e8f9ff">Search players, view career and season stats.</p>
         </div>
-</div>
-    <div class="box">
+      </div>
 
-            <div class="field">
-                <div class="control">
-                    <input class="input is-large" type="playerName" name="playerName" placeholder="Player's Name" autofocus="">
-                </div>
+      <div class="hero-head">
+        <nav class="navbar clean-nav" role="navigation" aria-label="main navigation">
+          <div class="container">
+            <div class="navbar-brand">
+              <a class="navbar-item" href="{{ url_for('auth.index') }}" title="Home" aria-label="Home">
+                <span class="icon" aria-hidden="true"><i class="fa-solid fa-baseball"></i></span>
+                <span style="margin-left:8px;">Lookup</span>
+              </a>
+
+              <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenuHeroA">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+              </a>
             </div>
-            <input type="hidden" name="btn_identifier" value="search" />
-            <button class="button is-block is-info is-large is-fullwidth">Submit</button>
-            <table>
-                 <tr>
-    <td>Player Name:</td>
-    <td> {{name}} </td>
-  </tr>
-  <tr>
-    <td>Games Played: </td>
-    <td> {{gamesPlayed}} </td>
-  </tr>
-  <tr>
-    <td>Batting Average:</td>
-    <td> {{batAvg}} </td>
-  </tr>
-  <tr>
-    <td>HomeRuns: </td>
-    <td> {{homeruns}}  </td>
-  </tr>
-  <tr>
-    <td>Strike Outs:</td>
-    <td> {{strikeouts}}  </td>
-  </tr>
-  <tr>
-    <td>RBI:</td>
-    <td> {{rbi}} </td>
-  </tr>
-</table>
 
+            <div id="navbarMenuHeroA" class="navbar-menu">
+              <div class="navbar-end">
+                <a
+                  href="{{ url_for('auth.index') }}"
+                  class="navbar-item {{ 'is-active' if (request.path | default(url_for('auth.index'))) == url_for('auth.index') else '' }}"
+                  role="link"
+                  title="Home"
+                  aria-label="Home"
+                  {% if (request.path | default(url_for('auth.index'))) == url_for('auth.index') %}aria-current="page"{% endif %}
+                >Home</a>
+
+                <a
+                  href="{{ url_for('auth.standings') }}"
+                  class="navbar-item {{ 'is-active' if (request.path | default(url_for('auth.index'))) == url_for('auth.standings') else '' }}"
+                  role="link"
+                  title="Standings"
+                  aria-label="Standings"
+                  {% if (request.path | default(url_for('auth.index'))) == url_for('auth.standings') %}aria-current="page"{% endif %}
+                >Standings</a>
+
+                <a
+                  href="{{ url_for('auth.lineup') }}"
+                  class="navbar-item {{ 'is-active' if (request.path | default(url_for('auth.index'))) == url_for('auth.lineup') else '' }}"
+                  role="link"
+                  title="Lineup"
+                  aria-label="Lineup"
+                  {% if (request.path | default(url_for('auth.index'))) == url_for('auth.lineup') %}aria-current="page"{% endif %}
+                >Lineup</a>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      <form method="POST" action="/" class="field has-addons" style="display:flex;align-items:center; gap:0.5rem; margin-top:1rem;">
+        <label class="sr-only" for="playerName">Player Name</label>
+        <div class="control" style="flex:1;">
+          <input id="playerName" class="input is-medium" type="text" name="playerName" placeholder="Search player name — e.g., Jose Trevino" required>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <label class="checkbox" style="margin:0;">
+            <input type="checkbox" name="csStats" value="season" {% if csStats %}checked{% endif %}>
+            Season
+          </label>
+
+          <input type="hidden" name="btn_identifier" value="search">
+          <button class="button is-primary is-medium" type="submit"><span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span><span> Search</span></button>
+        </div>
+      </form>
     </div>
-</div>
-</div>
 
+    <div class="columns is-centered" style="margin-top: 1rem;">
+      <div class="column is-10">
+        <div class="card player-card">
+          <div class="card-content">
+            {% if player or name %}
+            <div class="columns is-vcentered is-multiline">
+              <div class="column is-3-tablet is-2-desktop has-text-centered">
+                <div style="display:inline-block;">
+                  <div class="avatar" aria-hidden="true">
+                    {% if player and player.first_name and player.last_name %}
+                      {{ player.first_name[0] }}{{ player.last_name[0] }}
+                    {% elif name %}
+                      {{ name[0:2] | upper }}
+                    {% else %}
+                      --
+                    {% endif %}
+                  </div>
+                </div>
+                <div style="margin-top:8px">
+                  <div class="tags is-justify-content-center" style="display:flex;justify-content:center;">
+                    <span class="tag is-light is-rounded"><i class="fa-solid fa-user-gear"></i>&nbsp; {{ player.position if player else position if position else '—' }}</span>
+                  </div>
+                </div>
+              </div>
 
-{% endblock %}
+              <div class="column is-5-tablet is-6-desktop">
+                <h2 class="title is-4" style="margin-bottom:0;">
+                  {% if player %}{{ player.first_name }} {{ player.last_name }}{% else %}{{ name }}{% endif %}
+                </h2>
+                <p class="muted" style="margin-bottom:0.5rem;">
+                  {% if player and player.current_team %}<strong>{{ player.current_team }}</strong> • {% endif %}
+                  MLB Debut:
+                  <span class="tag is-light is-small">{{ player.mlb_debut if player and player.mlb_debut else season_debut if season_debut else 'N/A' }}</span>
+                </p>
+                <p class="muted">Nickname:
+                  <span class="tag is-info is-light is-small">{{ player.nickname if player and player.nickname else '—' }}</span>
+                </p>
+
+                <div class="columns is-mobile is-multiline" style="margin-top:0.5rem;">
+                  <div class="column is-4 stat-tile">
+                    <div class="has-text-weight-semibold is-size-5">{{ gamesPlayed if gamesPlayed is defined else (player.stats[0].stats.gamesPlayed if player and player.stats else '—') }}</div>
+                    <div class="muted">Games</div>
+                  </div>
+                  <div class="column is-4 stat-tile">
+                    <div class="has-text-weight-semibold is-size-5">{{ batAvg if batAvg is defined else (player.stats[0].stats.avg if player and player.stats else '—') }}</div>
+                    <div class="muted">AVG</div>
+                  </div>
+                  <div class="column is-4 stat-tile">
+                    <div class="has-text-weight-semibold is-size-5">{{ homeruns if homeruns is defined else (player.stats[0].stats.homeRuns if player and player.stats else '—') }}</div>
+                    <div class="muted">HR</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="column is-4-tablet is-4-desktop">
+                <div class="level">
+                  <div class="level-left">
+                    <div>
+                      <div class="muted">RBI</div>
+                      <div class="has-text-weight-semibold is-size-4">{{ rbi if rbi is defined else (player.stats[0].stats.rbi if player and player.stats else '—') }}</div>
+                    </div>
+                  </div>
+                  <div class="level-right" style="text-align:right">
+                    <div class="muted">K's</div>
+                    <div class="has-text-weight-semibold is-size-4">{{ strikeouts if strikeouts is defined else (player.stats[0].stats.strikeOuts if player and player.stats else '—') }}</div>
+                  </div>
+                </div>
+
+                <div style="margin-top:1rem;">
+                  <div class="muted">Power Index</div>
+                  <progress class="progress is-primary progress-small" value="{{ (player.stats[0].stats.homeRuns|int / 40) if player and player.stats and player.stats[0].stats.homeRuns else ((homeruns|int)/40 if homeruns is defined else 0) }}" max="1"></progress>
+                  <div class="muted" style="font-size:0.85rem;">Contact / Eye: <strong>{{ player.stats[0].stats.avg if player and player.stats else (batAvg if batAvg is defined else '—') }}</strong></div>
+                </div>
+              </div>
+
+              <div class="column is-12">
+                <hr>
+                <div class="is-flex is-justify-content-space-between is-align-items-center" style="gap:10px;">
+                  <div>
+                    <h3 class="title is-6" style="margin-bottom:0.25rem;">Detailed Stats</h3>
+                    <p class="muted">Career / Season summary</p>
+                  </div>
+                  <div class="buttons">
+                    <button class="button is-light is-small" type="button"><span class="icon"><i class="fa-solid fa-download"></i></span><span> Export</span></button>
+                    <button class="button is-primary is-small" type="button"><span class="icon"><i class="fa-solid fa-chart-line"></i></span><span> Trends</span></button>
+                  </div>
+                </div>
+
+                <div class="table-container" style="margin-top:0.75rem;">
+                  <table class="table is-fullwidth is-hoverable">
+                    <thead>
+                      <tr>
+                        <th>Metric</th>
+                        <th class="has-text-right">Value</th>
+                        <th class="has-text-right">Notes</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Games Played</td>
+                        <td class="has-text-right">{{ gamesPlayed if gamesPlayed is defined else (player.stats[0].stats.gamesPlayed if player and player.stats else '—') }}</td>
+                        <td class="has-text-right muted">Career</td>
+                      </tr>
+                      <tr>
+                        <td>Batting Average</td>
+                        <td class="has-text-right">{{ batAvg if batAvg is defined else (player.stats[0].stats.avg if player and player.stats else '—') }}</td>
+                        <td class="has-text-right muted">AVG (career)</td>
+                      </tr>
+                      <tr>
+                        <td>Home Runs</td>
+                        <td class="has-text-right">{{ homeruns if homeruns is defined else (player.stats[0].stats.homeRuns if player and player.stats else '—') }}</td>
+                        <td class="has-text-right muted">Power</td>
+                      </tr>
+                      <tr>
+                        <td>Strikeouts</td>
+                        <td class="has-text-right">{{ strikeouts if strikeouts is defined else (player.stats[0].stats.strikeOuts if player and player.stats else '—') }}</td>
+                        <td class="has-text-right muted">Discipline</td>
+                      </tr>
+                      <tr>
+                        <td>RBI</td>
+                        <td class="has-text-right">{{ rbi if rbi is defined else (player.stats[0].stats.rbi if player and player.stats else '—') }}</td>
+                        <td class="has-text-right muted">Run production</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            {% else %}
+            <div class="content has-text-centered">
+              <p class="muted">No player selected. Use the search above to lookup a player.</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const burgers = Array.from(document.querySelectorAll('.navbar-burger'));
+    burgers.forEach(b => b.addEventListener('click', () => {
+      const target = document.getElementById(b.dataset.target);
+      b.classList.toggle('is-active');
+      if (target) target.classList.toggle('is-active');
+    }));
+  });
+</script>
+</body>
+</html>

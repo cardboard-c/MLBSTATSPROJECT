@@ -269,9 +269,14 @@ def lineup(name):
         return render_template('lineup.html', error=error, name=fullname, gamesPlayed=gamesPlayed, batAvg=batAvg,
                                homeruns=hr, strikeouts=so, rbi=RBI)
     if request.method == 'POST':
+        if request.form.get('csStats') == 'season':
+            yearOrCareer = "season"
+        else:
+            yearOrCareer = "career"
+    if request.method == 'POST':
         if request.form['btn_identifier'] == 'search':
             pName = request.form['playerName']
-            stats = getplayer(pName, "career", "hitting")
+            stats = getplayer(pName, yearOrCareer, "hitting")
             if stats is not None:
                 getPlayerListForHome(stats)
                 populateAndRefresh()

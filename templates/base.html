@@ -1,47 +1,200 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+                    <html lang="en">
+                    <head>
+                      <meta charset="utf-8">
+                      <title>Player Lookup</title>
+                      <meta name="viewport" content="width=device-width,initial-scale=1">
+                      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+                      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                      <style>
+                        .hero-gradient {
+                          background: linear-gradient(135deg,#0f172a 0%, #0b84ff 50%, #00d4ff 100%);
+                          color: white;
+                          border-radius: 12px;
+                          box-shadow: 0 10px 30px rgba(6,22,43,0.5);
+                          padding: 2rem;
+                        }
+                        .player-card {
+                          transform: none;
+                          margin-top: 1.25rem;
+                          box-shadow: 0 8px 24px rgba(16,24,40,0.2);
+                          border-radius: 12px;
+                          overflow: hidden;
+                        }
+                        .avatar {
+                          width: 96px;
+                          height: 96px;
+                          border-radius: 50%;
+                          background: linear-gradient(135deg,#ffffff22,#ffffff11);
+                          display:flex;
+                          align-items:center;
+                          justify-content:center;
+                          font-weight:700;
+                          color:white;
+                          font-size:28px;
+                          border: 3px solid rgba(255,255,255,0.08);
+                          margin: 0 auto;
+                        }
+                        .stat-tile {
+                          min-height: 88px;
+                          display:flex;
+                          flex-direction:column;
+                          justify-content:center;
+                          gap:4px;
+                          text-align:center;
+                        }
+                        .progress-small {
+                          height: 8px;
+                          border-radius: 8px;
+                          overflow:hidden;
+                        }
+                        .muted { color: #7a869a; font-size:0.9rem; }
+                        @media (max-width: 768px) {
+                          .player-card { margin-top: 1rem; }
+                        }
+                        .sr-only {
+                          position:absolute !important;
+                          width:1px !important;
+                          height:1px !important;
+                          padding:0 !important;
+                          margin:-1px !important;
+                          overflow:hidden !important;
+                          clip:rect(0,0,0,0) !important;
+                          white-space:nowrap !important;
+                          border:0 !important;
+                        }
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Flask Auth Example</title>
-    <!--
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
-    -->
-    <link rel="stylesheet" type="text/css" href="../static/mystyle.css">
+                        /* Clean navbar styles */
+                        .navbar.clean-nav {
+                          background: rgba(255,255,255,0.04);
+                          padding: 0.35rem 0.75rem;
+                          border-radius: 10px;
+                          box-shadow: 0 8px 20px rgba(2,6,23,0.28);
+                          backdrop-filter: blur(6px);
+                          margin-bottom: 0.75rem;
+                        }
+                        .navbar.clean-nav .navbar-item {
+                          color: #eaf7ff;
+                          padding: 0.45rem 0.7rem;
+                          border-radius: 6px;
+                          transition: background .12s ease, color .12s ease, transform .12s ease;
+                          font-weight: 500;
+                        }
+                        .navbar.clean-nav .navbar-item:hover {
+                          background: rgba(255,255,255,0.04);
+                          color: #ffffff;
+                          transform: translateY(-1px);
+                        }
+                        .navbar.clean-nav .navbar-item.is-active {
+                          background: rgba(255,255,255,0.10);
+                          color: #fff;
+                          box-shadow: inset 0 -2px 0 rgba(255,255,255,0.06);
+                        }
+                        .navbar.clean-nav .navbar-brand .navbar-item {
+                          font-weight: 700;
+                          color: #fff;
+                        }
+                        .navbar.clean-nav .icon { color: #fff; }
+                        .navbar.clean-nav .navbar-burger { color: #fff; }
+                        @media (max-width: 768px) {
+                          .navbar.clean-nav { padding: 0.25rem 0.5rem; }
+                        }
+                      </style>
+                    </head>
+                    <body>
+                    <section class="section">
+                      <div class="container">
+                        <div class="hero hero-gradient">
+                          <div class="columns is-vcentered is-mobile">
+                            <div class="column">
+                              <h1 class="title is-3" style="color: #fff">Baseball Lookup</h1>
+                              <p class="subtitle is-6" style="color: #e8f9ff">Search players, view career and season stats.</p>
+                            </div>
+                          </div>
 
-</head>
+                          <div class="hero-head">
+                            <nav class="navbar clean-nav" role="navigation" aria-label="main navigation">
+                              <div class="container">
+                                <div class="navbar-brand">
+                                  <a class="navbar-item" href="{{ url_for('auth.index') }}" title="Home" aria-label="Home">
+                                    <span class="icon" aria-hidden="true"><i class="fa-solid fa-baseball"></i></span>
+                                    <span style="margin-left:8px;">Lookup</span>
+                                  </a>
 
-<body>
-    <section class="hero is-primary is-fullheight">
-        <div class="hero-head">
-            <nav class="navbar">
-                <div class="container">
-                    <div id="navbarMenuHeroA" class="navbar-menu">
-                        <div class="navbar-end">
-                            <a href="{{ url_for('auth.index') }}" class="navbar-item">
-                                Home
-                            </a>
-                            <a href="{{ url_for('auth.standings') }}" class="navbar-item">
-                                Standings
-                            </a>
-                            <a href="{{ url_for('auth.lineup') }}" class="navbar-item">
-                                Lineup
-                            </a>
+                                  <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarMenuHeroA">
+                                    <span aria-hidden="true"></span>
+                                    <span aria-hidden="true"></span>
+                                    <span aria-hidden="true"></span>
+                                  </a>
+                                </div>
+
+                                <div id="navbarMenuHeroA" class="navbar-menu">
+                                  <div class="navbar-end">
+                                    <a
+                                      href="{{ url_for('auth.index') }}"
+                                      class="navbar-item {{ 'is-active' if (request.path | default(url_for('auth.index'))) == url_for('auth.index') else '' }}"
+                                      role="link"
+                                      title="Home"
+                                      aria-label="Home"
+                                    >Home</a>
+
+                                    <a
+                                      href="{{ url_for('auth.standings') }}"
+                                      class="navbar-item {{ 'is-active' if (request.path | default(url_for('auth.index'))) == url_for('auth.standings') else '' }}"
+                                      role="link"
+                                      title="Standings"
+                                      aria-label="Standings"
+                                    >Standings</a>
+
+                                    <a
+                                      href="{{ url_for('auth.lineup') }}"
+                                      class="navbar-item {{ 'is-active' if (request.path | default(url_for('auth.index'))) == url_for('auth.lineup') else '' }}"
+                                      role="link"
+                                      title="Lineup"
+                                      aria-label="Lineup"
+                                    >Lineup</a>
+                                  </div>
+                                </div>
+                              </div>
+                            </nav>
+                          </div>
+
+                          <form method="POST" action="/" class="field has-addons" style="display:flex;align-items:center; gap:0.5rem; margin-top:1rem;">
+                            <label class="sr-only" for="playerName">Player Name</label>
+                            <div class="control" style="flex:1;">
+                              <input id="playerName" class="input is-medium" type="text" name="playerName" placeholder="Search player name — e.g., Jose Trevino" required>
+                            </div>
+
+                            <div style="display:flex; align-items:center; gap:0.5rem;">
+                              <label class="checkbox" style="margin:0;">
+                                <input type="checkbox" name="csStats" value="season" {% if csStats %}checked{% endif %}>
+                                Season
+                              </label>
+
+                              <input type="hidden" name="btn_identifier" value="search">
+                              <button class="button is-primary is-medium" type="submit"><span class="icon"><i class="fa-solid fa-magnifying-glass"></i></span><span> Search</span></button>
+                            </div>
+                          </form>
                         </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
 
-        <div class="hero-body">
-            <div class="container has-text-centered">
-               {% block content %}
-               {% endblock %}
-            </div>
-        </div>
-    </section>
-</body>
+                        <div class="columns is-centered" style="margin-top: 1rem;">
+                          <div class="column is-10">
+                            {% block content %}{% endblock %}
+                          </div>
+                        </div>
 
-</html>
+                      </div>
+                    </section>
+
+                    <script>
+                      document.addEventListener('DOMContentLoaded', () => {
+                        const burgers = Array.from(document.querySelectorAll('.navbar-burger'));
+                        burgers.forEach(b => b.addEventListener('click', () => {
+                          const target = document.getElementById(b.dataset.target);
+                          b.classList.toggle('is-active');
+                          if (target) target.classList.toggle('is-active');
+                        }));
+                      });
+                    </script>
+                    </body>
+                    </html>
